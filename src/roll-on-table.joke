@@ -47,7 +47,7 @@
 
 (defn print-result
   [{:keys [roll event counter-total]}]
-  (println "Roll:" roll "out of" counter-total)
+  (println "Roll:" (inc roll) "out of" counter-total)
   (println "->" event)
   )
 
