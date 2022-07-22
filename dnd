@@ -1,0 +1,16 @@
+#!/usr/bin/env joker
+(ns main
+  (:require
+    [joker.os :as os]
+    [src.roll-on-table :as roll-on-table]))
+
+(defn -main
+  [[ _ _ sub-cmd & args]]
+  (case sub-cmd
+    "roll-on-table" (roll-on-table/main args)
+    "roll-table"    (roll-on-table/main args)
+    "table"         (roll-on-table/main args)
+    ;; else
+    (println "Unknown sub command" sub-cmd)))
+
+(-main (os/args))

@@ -1,0 +1,61 @@
+(ns src.roll-on-table
+  (:require
+    [joker.strconv :refer [parse-int]]
+    [joker.string :as string]
+    [joker.os :as os]))
+
+(defn- parse-table
+  [filename]
+  (let [rows (map (fn [line]
+                    (let [[counter event] (string/split line " " 2)]
+                      {:counter (parse-int counter 0 32)
+                       :event event}))
+                  (-> filename os/open line-seq))]
+    {:counter-sum (some->> rows (map :counter) (reduce +))
+     :rows rows}))
+
+(defn- roll
+  [table]
+  (let [counter-total (max (:counter-sum table) 100)
+        rol_ (rand-int counter-total)
+        seek (fn [x [first-option & other-options]]
+               (cond
+                 (nil? first-option) {:event "Nothing"}
+                 (<= x 0) first-option
+                 (< x (:counter first-option)) first-option
+                 :else (recur (- x (:counter first-option))
+                              other-options)))]
+    {:roll rol_
+     :counter-total counter-total
+     :event (:event (seek rol_ (sort-by :counter (:rows table))))}))
+
+(defn- print-rows
+  [from rows]
+  (if (empty? rows)
+    nil
+    (let [{:keys [event counter]} (some-> rows first)
+          to (+ from counter)]
+      (println (inc from) "-" to "|" event)
+      (recur (+ from counter)
+             (rest rows)))))
+
+(defn print-table
+  [table]
+  (let [sorted-rows (sort-by :counter (-> table :rows))]
+    (print-rows 0
+                sorted-rows)))
+
+(defn print-result
+  [{:keys [roll event counter-total]}]
+  (println "Roll:" roll "out of" counter-total)
+  (println "->" event)
+  )
+
+(defn main
+  [[table-file]]
+  (prn "roll on table")
+  (let [table (parse-table table-file)
+        result (roll table)]
+    (print-table table)
+    (println)
+    (print-result result)))
