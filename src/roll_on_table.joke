@@ -1,8 +1,8 @@
 (ns src.roll-on-table
   (:require
-    [joker.strconv :refer [parse-int]]
-    [joker.string :as string]
-    [joker.os :as os]))
+   [joker.strconv :refer [parse-int]]
+   [joker.string :as string]
+   [joker.os :as os]))
 
 (defn- parse-table
   [filename]
@@ -48,9 +48,9 @@
 (defn print-result
   [{:keys [roll event counter-total]}]
   (println "Roll:" (inc roll) "out of" counter-total)
-  (println "->" event)
-  )
+  (println "->" event))
 
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn main
   [[table-file]]
   (prn "roll on table")
